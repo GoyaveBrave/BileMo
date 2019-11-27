@@ -42,6 +42,11 @@ class Clients
      */
     private $operateur;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $adress;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -103,6 +108,18 @@ class Clients
     public function setOperateur(?Operateur $operateur): self
     {
         $this->operateur = $operateur;
+
+        return $this;
+    }
+
+    public function getAdress(): ?string
+    {
+        return $this->adress;
+    }
+
+    public function setAdress(?string $adress): self
+    {
+        $this->adress = $adress;
 
         return $this;
     }
