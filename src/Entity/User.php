@@ -43,6 +43,16 @@ class User implements UserInterface
      */
     private $adress;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\operateur", inversedBy="users")
+     */
+    private $operateur_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -141,6 +151,30 @@ class User implements UserInterface
     public function setAdress(?string $adress): self
     {
         $this->adress = $adress;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getOperateurId(): ?operateur
+    {
+        return $this->operateur_id;
+    }
+
+    public function setOperateurId(?operateur $operateur_id): self
+    {
+        $this->operateur_id = $operateur_id;
 
         return $this;
     }

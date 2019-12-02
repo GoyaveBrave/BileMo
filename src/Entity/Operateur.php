@@ -24,13 +24,19 @@ class Operateur
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Clients", mappedBy="operateur", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="operateur_id")
      */
-    private $clients;
+    private $users;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $logo;
 
     public function __construct()
     {
         $this->clients = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -51,32 +57,44 @@ class Operateur
     }
 
     /**
-     * @return Collection|Clients[]
+     * @return Collection|User[]
      */
-    public function getClients(): Collection
+    public function getUsers(): Collection
     {
-        return $this->clients;
+        return $this->users;
     }
 
-    public function addClient(Clients $client): self
+    public function addUser(User $user): self
     {
-        if (!$this->clients->contains($client)) {
-            $this->clients[] = $client;
-            $client->setOperateur($this);
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setOperateurId($this);
         }
 
         return $this;
     }
 
-    public function removeClient(Clients $client): self
+    public function removeUser(User $user): self
     {
-        if ($this->clients->contains($client)) {
-            $this->clients->removeElement($client);
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
             // set the owning side to null (unless already changed)
-            if ($client->getOperateur() === $this) {
-                $client->setOperateur(null);
+            if ($user->getOperateurId() === $this) {
+                $user->setOperateurId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?string $logo): self
+    {
+        $this->logo = $logo;
 
         return $this;
     }

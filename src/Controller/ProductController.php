@@ -3,57 +3,77 @@
 namespace App\Controller;
 
 use App\Entity\Products;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
 
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/product", name="product_show")
+     * @Route("/product/{id}", name="product_show")
      */
-    public function showAction(SerializerInterface $serializer)
+    public function showAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, $id)
     {
-        $product = new Products;
-        $product
-                ->setName('Mon premier joli article qui tue')
-                ->setContent('Ceci est mon contenu fwewo');
-        $jsonContent = $serializer->serialize($product, 'json');
+        $prod = new Products;
+        $products = $em->getRepository(Products::class)
+                       ->find($id);
+        $jsonContent = $serializer->serialize($products, 'json');
 
         $response = new Response($jsonContent);
-        $response->headers->set('Content-type', 'application/json');
-        
+        $response->headers->set('Content-type',  'application/json');
+        //$response->setSharedMaxAge(15);
+        $response->setEtag(md5($response->getContent()));
+        $response->setPublic(); // make sure the response is public/cacheable
+        $response->isNotModified($request);
         return $response;
     }
 
     /**
-     * @Route("/products", name="post_product")
+     * @Route("/products", name="products_show")
      */
-    public function createAction(Request $request)
+
+     public function showAllAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
+     {
+
+        $prod = new Products;
+        $products = $em->getRepository(Products::class)
+                       ->findAll();
+        $jsonContent = $serializer->serialize($products, 'json');
+
+        $response = new Response($jsonContent);
+        $response->headers->set('Content-type',  'application/json');
+        //$response->setSharedMaxAge(15);
+        $response->setEtag(md5($response->getContent()));
+        $response->setPublic(); // make sure the response is public/cacheable
+        $response->isNotModified($request);
+        return $response;
+     }
+
+    /**
+     * @Route("/post-product", name="post_product", methods={"POST"})
+     */
+    public function createAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $manager)
     {
+
 
         $encoders = [ new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
         
-        $jsonContent = $request->getContent();
-        dd($serializer->deserialize($jsonContent, Product::class, 'json'));
+        $product = $request->getContent();
+        $data = $serializer->deserialize($product, Products::class, 'json');
 
-        dump($product); die;
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($product);
-        $em->flush();
+        
+        $manager->persist($data);
+        $manager->flush();
 
-        echo $product;
+        return new Response('Success', Response::HTTP_CREATED);
     }
 }
