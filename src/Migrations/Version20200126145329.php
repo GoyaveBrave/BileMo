@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20191126083830 extends AbstractMigration
+final class Version20200126145329 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,7 +22,9 @@ final class Version20191126083830 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE products ADD content LONGTEXT DEFAULT NULL, ADD picture VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE user DROP FOREIGN KEY FK_8D93D649B171EB6C');
+        $this->addSql('DROP INDEX IDX_8D93D649B171EB6C ON user');
+        $this->addSql('ALTER TABLE user DROP customer_id_id');
     }
 
     public function down(Schema $schema) : void
@@ -30,6 +32,8 @@ final class Version20191126083830 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE products DROP content, DROP picture');
+        $this->addSql('ALTER TABLE user ADD customer_id_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE user ADD CONSTRAINT FK_8D93D649B171EB6C FOREIGN KEY (customer_id_id) REFERENCES customer (id)');
+        $this->addSql('CREATE INDEX IDX_8D93D649B171EB6C ON user (customer_id_id)');
     }
 }

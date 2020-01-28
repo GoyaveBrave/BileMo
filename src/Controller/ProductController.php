@@ -17,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/product/{id}", name="product_show")
+     * @Route("/product-management/managed-products{id}", name="show_product", methods={"GET"})
      */
     public function showAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, $id)
     {
@@ -36,18 +36,17 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/products", name="products_show")
+     * @Route("/product-management/managed-products", name="show_products", methods={"GET"})
      */
 
      public function showAllAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
      {
 
-        $prod = new Products;
-        $products = $em->getRepository(Products::class)
+        $prod = $em->getRepository(Products::class)
                        ->findAll();
-        $jsonContent = $serializer->serialize($products, 'json');
+        $data = $serializer->serialize($prod, 'json');
 
-        $response = new Response($jsonContent);
+        $response = new Response($data);
         $response->headers->set('Content-type',  'application/json');
         //$response->setSharedMaxAge(15);
         $response->setEtag(md5($response->getContent()));
@@ -57,23 +56,49 @@ class ProductController extends AbstractController
      }
 
     /**
-     * @Route("/post-product", name="post_product", methods={"POST"})
+     * @Route("/product-management/managed-products", name="new_product", methods={"POST"})
      */
     public function createAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $manager)
     {
-
-
         $encoders = [ new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
-        
         $product = $request->getContent();
         $data = $serializer->deserialize($product, Products::class, 'json');
 
-        
         $manager->persist($data);
         $manager->flush();
+        return new Response('Success', Response::HTTP_CREATED);
+    }
 
+    /**
+     * @Route("/product-management/managed-products{id}", name="update_product", methods={"PUT"})
+     * @param Request $request
+     * @param $id
+     * @param SerializerInterface $serializer
+     * @param EntityManagerInterface $em
+     * @return Response
+     */
+    public function updateAction(Request $request, $id, SerializerInterface $serializer, EntityManagerInterface $em, Products $products)
+    {
+        $encoders = [ new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+        $req = $request->getContent();
+        $data = $serializer->deserialize($req,Products::class, 'json');
+        $products->setName($data->getName())
+                 ->setContent($data->getContent())
+                 ->setPrice($data->getPrice());
+        $em->flush();
+        return new Response('Success', Response::HTTP_CREATED);
+    }
+    /**
+     * @Route("/product-management/managed-products{id}", name="remove_product", methods={"DELETE"})
+     */
+    public function removeAction(Request $request, $id, EntityManagerInterface $em, Products $products)
+    {
+        $em->remove($products);
+        $em->flush();
         return new Response('Success', Response::HTTP_CREATED);
     }
 }

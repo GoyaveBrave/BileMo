@@ -30,10 +30,8 @@ class ClientsFixtures extends Fixture
         //Ajout des users
         for ($i = 0; $i < 10; $i++) {
             $user = new User();
-            $user->setName($faker->name())
-                ->setEmail($faker->email())
+            $user->setEmail($faker->email())
                 ->setPassword($faker->password())
-                ->setAdress($faker->address())
                 ->setToken($faker->regexify('[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}'));
             
             $manager->persist($user);

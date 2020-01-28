@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -18,18 +20,18 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @ORM\Column(type="string", length=180, unique=true, nullable=true)
      */
     private $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="json", nullable=true)
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $password;
 
@@ -39,19 +41,22 @@ class User implements UserInterface
     private $token;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Customer", mappedBy="user_id")
      */
-    private $adress;
+    private $customers;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * User constructor.
+     * @param $email
+     * @param $token
      */
-    private $name;
+    public function __construct($email, $token)
+    {
+        $this->email = $email;
+        $this->token = $token;
+        $this->customers = new ArrayCollection();
+    }
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\operateur", inversedBy="users")
-     */
-    private $operateur_id;
 
     public function getId(): ?int
     {
@@ -143,38 +148,33 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getAdress(): ?string
+    /**
+     * @return Collection|Customer[]
+     */
+    public function getCustomers(): Collection
     {
-        return $this->adress;
+        return $this->customers;
     }
 
-    public function setAdress(?string $adress): self
+    public function addCustomer(Customer $customer): self
     {
-        $this->adress = $adress;
+        if (!$this->customers->contains($customer)) {
+            $this->customers[] = $customer;
+            $customer->setUserId($this);
+        }
 
         return $this;
     }
 
-    public function getName(): ?string
+    public function removeCustomer(Customer $customer): self
     {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getOperateurId(): ?operateur
-    {
-        return $this->operateur_id;
-    }
-
-    public function setOperateurId(?operateur $operateur_id): self
-    {
-        $this->operateur_id = $operateur_id;
+        if ($this->customers->contains($customer)) {
+            $this->customers->removeElement($customer);
+            // set the owning side to null (unless already changed)
+            if ($customer->getUserId() === $this) {
+                $customer->setUserId(null);
+            }
+        }
 
         return $this;
     }
