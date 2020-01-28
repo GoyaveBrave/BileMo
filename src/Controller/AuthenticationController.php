@@ -6,9 +6,7 @@ namespace App\Controller;
 
 use Firebase\JWT\JWT;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class AuthenticationController extends AbstractController
 {
@@ -28,14 +26,5 @@ class AuthenticationController extends AbstractController
             'email' => $user->getEmail(),
             'Token' => $jwt,
         ]);
-    }
-
-    /**
-     * @Route("/api/test", name="test")
-     *
-     */
-    public function test(Request $request)
-    {
-        dd($this->getUser());
     }
 }
