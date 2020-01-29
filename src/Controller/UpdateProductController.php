@@ -1,37 +1,33 @@
 <?php
 
 namespace App\Controller;
-use App\Entity\Customer;
 use App\Entity\Products;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class UpdateCustomerController extends AbstractController
+class UpdateProductController
 {
-
     /**
-     * @Route("/api/customer-management/managed-customer{id}", name="update_customer", methods={"PUT"})
+     * @Route("/product-management/managed-products{id}", name="update_product", methods={"PUT"})
      * @param Request $request
      * @param $id
      * @param SerializerInterface $serializer
      * @param EntityManagerInterface $em
-     * @param Customer $customer
+     * @param Products $products
      * @return Response
      */
-    public function updateAction(Request $request, $id, SerializerInterface $serializer, EntityManagerInterface $em, Customer $customer)
+    public function updateAction(Request $request, $id, SerializerInterface $serializer, EntityManagerInterface $em, Products $products)
     {
         $req = $request->getContent();
-        $data = $serializer->deserialize($req,Customer::class, 'json');
+        $data = $serializer->deserialize($req,Products::class, 'json');
 
-        $customer
+        $products
             ->setName($data->getName())
-            ->setAddress($data->getAddress())
-            ->setEmail($data->getEmail())
-            ->setUserId($this->getUser());
+            ->setContent($data->getContent())
+            ->setPrice($data->getPrice());
 
         $em->flush();
 
