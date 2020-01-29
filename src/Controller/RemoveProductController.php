@@ -14,22 +14,19 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-class ProductController extends AbstractController
+class RemoveProductController extends AbstractController
 {
-
-
-
-
-
-
-
     /**
      * @Route("/product-management/managed-products{id}", name="remove_product", methods={"DELETE"})
+     * @param EntityManagerInterface $em
+     * @param Products $products
+     * @return Response
      */
-    public function removeAction(Request $request, $id, EntityManagerInterface $em, Products $products)
+    public function removeAction(EntityManagerInterface $em, Products $products)
     {
         $em->remove($products);
         $em->flush();
+
         return new Response('Success', Response::HTTP_CREATED);
     }
 }

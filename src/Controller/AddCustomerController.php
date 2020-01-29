@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\DTO\CustomerDTO;
 use App\Entity\Customer;
-use App\Service\AddCustomerManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,11 +18,10 @@ class AddCustomerController extends AbstractController
      * @Route("/api/customer-management/managed-customer", name="customer_add", methods={"POST"})
      * @param Request $request
      * @param SerializerInterface $serializer
-     * @param AddCustomerManager $addCustomerManager
      * @param EntityManagerInterface $em
      * @return Response
      */
-    public function AddAction(Request $request, SerializerInterface $serializer, AddCustomerManager $addCustomerManager, EntityManagerInterface $em)
+    public function AddAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
     {
 
         $reqContent = $request->getContent();
