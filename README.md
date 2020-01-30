@@ -40,7 +40,7 @@ $ php bin/console doctrine:database:create
 $ php bin/console make:entity
 $ php bin/console make:migration
 $ php bin/console doctrine:fixtures:load
-
+```
 5.  Generate the SSH keys
 ```
 $ openssl genrsa -out config/jwt/private.pem -aes256 4096
