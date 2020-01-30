@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 use App\Entity\Products;
-use App\Service\CustomerSerializerManager;
 use App\Service\ResponseManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,14 +18,19 @@ class ShowProductController
      * @param EntityManagerInterface $em
      * @param ResponseManager $response
      * @return Response
+     * @throws \Exception
      */
 
     public function showAllAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ResponseManager $response)
     {
-        $prod = $em->getRepository(Products::class)
+        $products = $em->getRepository(Products::class)
             ->findAll();
+        if (!$products) {
+            throw new \Exception("Add customers to see them !");
+        }
 
-        $data = $serializer->serialize($prod, 'json');
+        $data = $serializer->serialize($products, 'json');
+
 
         return $response->response($data, $request);
     }

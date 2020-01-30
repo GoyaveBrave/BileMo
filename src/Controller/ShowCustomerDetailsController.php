@@ -21,6 +21,7 @@ class ShowCustomerDetailsController extends AbstractController
      * @param CustomerSerializerManager $customerSerializerManager
      * @param ResponseManager $response
      * @return Response
+     * @throws \Exception
      */
     public function showOneAction(Request $request, SerializerInterface $serializer, CustomerRepository $customerRepository, $id, CustomerSerializerManager $customerSerializerManager, ResponseManager $response)
     {
@@ -29,6 +30,9 @@ class ShowCustomerDetailsController extends AbstractController
         $customer = $customerRepository->findBy(
             array('id' => $id,
                 'user_id' => $user ));
+        if (!$customer) {
+            throw new \Exception("This customer does not exist ! Please try an other id or add him");
+        }
 
         $data = $customerSerializerManager->showSerializer($customer);
 

@@ -19,10 +19,14 @@ class ShowProductDetailsController
      * @param $id
      * @param ResponseManager $response
      * @return Response
+     * @throws \Exception
      */
     public function showAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, $id, ResponseManager $response)
     {
         $products = $em->getRepository(Products::class)->find($id);
+        if (!$products) {
+            throw new \Exception("This customer does not exist ! Please try an other id or add him");
+        }
         $data = $serializer->serialize($products, 'json');
 
         return $response->response($data, $request);
