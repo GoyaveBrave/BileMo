@@ -21,6 +21,7 @@ class ShowCustomerController extends AbstractController
      * @param CustomerSerializerManager $customerSerializerManager
      * @param ResponseManager $response
      * @return Response
+     * @throws \Exception
      */
     public function showAction(Request $request, EntityManagerInterface $em, CustomerRepository $customerRepository, CustomerSerializerManager $customerSerializerManager, ResponseManager $response)
     {
@@ -29,6 +30,9 @@ class ShowCustomerController extends AbstractController
         $customer = $customerRepository->findBy(array(
             "user_id" => $user
         ));
+        if (!$customer) {
+            throw new \Exception("Add customers to see them !");
+        }
 
         $data = $customerSerializerManager->showSerializer($customer);
 

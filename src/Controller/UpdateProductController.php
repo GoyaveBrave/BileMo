@@ -31,6 +31,6 @@ class UpdateProductController
 
         $em->flush();
 
-        return new Response('Success', Response::HTTP_CREATED);
+        return new Response('You have successfully updated', Response::HTTP_CREATED);
     }
 }
