@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Customer;
 use App\Entity\Products;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -19,6 +20,23 @@ class ProductsRepository extends ServiceEntityRepository
         parent::__construct($registry, Products::class);
     }
 
+    /**
+     * @var Products
+     * @param $id
+     * @param $user
+     * @return Customer[]
+     */
+    public function getOneCustomer($id, $user)
+    {
+        return $this->createQueryBuilder('c')
+            ->Where('c.user_id = :user')
+            ->andWhere('c.id = :id')
+            ->setParameter('user', $user)
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
     // /**
     //  * @return Products[] Returns an array of Products objects
     //  */

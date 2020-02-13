@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Products;
+use App\Repository\ProductsRepository;
+use App\Service\ResponseManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,11 +24,12 @@ class RemoveProductController extends AbstractController
      * @param Products $products
      * @return Response
      */
-    public function removeAction(EntityManagerInterface $em, Products $products)
+    public function removeAction(EntityManagerInterface $em, ProductsRepository $repository, $id)
     {
+        $products = $repository->find($id);
         $em->remove($products);
         $em->flush();
 
-        return new Response(Response::HTTP_NO_CONTENT);
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 }

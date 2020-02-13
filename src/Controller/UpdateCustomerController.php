@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UpdateCustomerController extends AbstractController
 {
@@ -33,16 +34,11 @@ class UpdateCustomerController extends AbstractController
     /**
      * @Route("/api/customers/{id}", name="update_customer", methods={"PUT"})
      *
-     * @param Request $request
      * @param $id
-     * @param ResponseManager $responseManager
-     * @param Response $response
      *
-     * @param CustomerRepository $customerRepository
-     * @param LinksAdderCustomer $linksAdderCustomer
      * @return Response
      */
-    public function updateAction(Request $request, $id, ResponseManager $responseManager, Response $response, CustomerRepository $customerRepository, LinksAdderCustomer $linksAdderCustomer)
+    public function updateAction(Request $request, $id, ResponseManager $responseManager, Response $response, CustomerRepository $customerRepository, LinksAdderCustomer $linksAdderCustomer, ValidatorInterface $validator)
     {
         $req = $request->getContent();
         $data = $this->serializer->deserialize($req, CustomerDTO::class, 'json');
@@ -55,7 +51,13 @@ class UpdateCustomerController extends AbstractController
             ->setName($data->getName())
             ->setEmail($data->getEmail())
             ->setAddress($data->getAddress())
-            ->setLink($link);
+            ;
+
+        $errors = $validator->validate($customer);
+
+        if (count($errors) > 0) {
+            return $this->json($errors, 400);
+        }
 
         $this->em->flush();
 

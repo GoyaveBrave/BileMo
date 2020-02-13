@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Products;
+use App\Repository\ProductsRepository;
+use App\Service\LinksAdderCustomer;
 use App\Service\ResponseManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,18 +19,22 @@ class ShowProductController
      *
      * @param Request $request
      * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $em
+     * @param ProductsRepository $repository
      * @param ResponseManager $response
+     * @param LinksAdderCustomer $linksAdder
      * @return Response
-     *
      */
-    public function showAllAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ResponseManager $response)
+    public function showAllAction(Request $request, SerializerInterface $serializer, ProductsRepository $repository, ResponseManager $response, LinksAdderCustomer $linksAdder)
     {
-        $data = $em->getRepository(Products::class)
-            ->findAll();
+        /** @var Products $products */
+        $products = $repository->findAll();
 
-        //$data = $serializer->serialize($products, 'json');
+        $link = $linksAdder->addLink();
 
-        return $response($data, $request, Response::HTTP_OK);
+        foreach ($products as $product) {
+            $product->setLink($link);
+        }
+
+        return $response($products, $request, Response::HTTP_OK);
     }
 }

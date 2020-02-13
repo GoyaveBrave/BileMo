@@ -33,15 +33,8 @@ class ShowCustomerDetailsController extends AbstractController
     /**
      * @Route("/api/customers/{id}", name="customer_show", methods={"GET"})
      *
-     * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param CustomerRepository $customerRepository
      * @param $id
      *
-     * @param CustomerSerializerManager $customerSerializerManager
-     * @param ResponseManager $response
-     * @param LinksAdderCustomer $linksAdder
-     * @param ValidatorInterface $validator
      * @return Response
      */
     public function showOneAction(Request $request, SerializerInterface $serializer, CustomerRepository $customerRepository, $id, CustomerSerializerManager $customerSerializerManager, ResponseManager $response, LinksAdderCustomer $linksAdder, ValidatorInterface $validator)
@@ -49,11 +42,6 @@ class ShowCustomerDetailsController extends AbstractController
         $user = $this->getUser();
         $customer = $customerRepository->getOneCustomer($id, $user);
 
-        $errors = $validator->validate($customer);
-
-        if (count($errors) > 0) {
-            return $this->json($errors, 400);
-        }
         $link = $linksAdder->addLink();
         foreach ($customer as $customers) {
             $customers->setLink($link);

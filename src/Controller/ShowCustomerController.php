@@ -19,13 +19,6 @@ class ShowCustomerController extends AbstractController
     /**
      * @Route("/api/customers", name="customer_list_show", methods={"GET"})
      *
-     * @param Request $request
-     * @param EntityManagerInterface $em
-     * @param CustomerRepository $customerRepository
-     * @param CustomerSerializerManager $customerSerializerManager
-     * @param ResponseManager $response
-     * @param ValidatorInterface $validator
-     * @param LinksAdderCustomer $linksAdder
      * @return Response
      */
     public function showAction(Request $request, EntityManagerInterface $em, CustomerRepository $customerRepository, CustomerSerializerManager $customerSerializerManager, ResponseManager $response, ValidatorInterface $validator, LinksAdderCustomer $linksAdder)
@@ -34,12 +27,6 @@ class ShowCustomerController extends AbstractController
 
         /** @var Customer $customer */
         $customer = $customerRepository->getAllCustomers($user);
-
-        $errors = $validator->validate($customer);
-
-        if (count($errors) > 0) {
-            return $this->json($errors, 400);
-        }
 
         $link = $linksAdder->addLink();
         foreach ($customer as $customers) {
