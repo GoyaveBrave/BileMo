@@ -22,11 +22,17 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
     Symfony\Component\HttpFoundation\Request:
         autowire: true
     Symfony\Component\Serializer\Encoder\JsonEncoder:
         autowire: true
-
+    Symfony\Component\HttpFoundation\Response:
+        autowire: true
+    Symfony\Component\HttpFoundation\JsonResponse:
+        autowire: true
+    Symfony\Component\HttpKernel\Event\ExceptionEvent:
+        autowire: true
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     get_set_method_normalizer:

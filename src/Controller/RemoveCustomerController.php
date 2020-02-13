@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Controller;
+
 use App\Entity\Customer;
-use App\Entity\Products;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,9 +10,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class RemoveCustomerController
 {
     /**
-     * @Route("/api/customer-management/managed-customer{id}", name="remove_customer", methods={"DELETE"})
-     * @param EntityManagerInterface $em
-     * @param Customer $customer
+     * @Route("/api/customers/{id}", name="remove_customer", methods={"DELETE"})
+     *
      * @return Response
      */
     public function removeAction(EntityManagerInterface $em, Customer $customer)
@@ -20,6 +19,6 @@ class RemoveCustomerController
         $em->remove($customer);
         $em->flush();
 
-        return new Response('Success', Response::HTTP_CREATED);
+        return new Response(Response::HTTP_NO_CONTENT);
     }
 }

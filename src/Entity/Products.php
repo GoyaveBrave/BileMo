@@ -3,9 +3,13 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductsRepository")
+ * @UniqueEntity(
+ *     fields={"name"}
+ * )
  */
 class Products
 {
@@ -17,7 +21,7 @@ class Products
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $name;
 
@@ -35,6 +39,26 @@ class Products
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $picture;
+
+    private $link;
+
+    /**
+     * Products constructor.
+     *
+     * @param $name
+     * @param $price
+     * @param $content
+     * @param $picture
+     * @param $link
+     */
+    public function __construct($name, $price, $content, $picture, $link)
+    {
+        $this->name = $name;
+        $this->price = $price;
+        $this->content = $content;
+        $this->picture = $picture;
+        $this->link = $link;
+    }
 
     public function getId(): ?int
     {
@@ -87,5 +111,25 @@ class Products
         $this->picture = $picture;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * @param mixed $link
+     *
+     * @return mixed
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
+
+        return $link;
     }
 }

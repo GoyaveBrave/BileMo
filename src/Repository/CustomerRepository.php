@@ -35,6 +35,41 @@ class CustomerRepository extends ServiceEntityRepository
             ;
     }
 
+    /**
+     * @var Customer
+     *
+     * @param $user
+     *
+     * @return Customer[]
+     */
+    public function getAllCustomers($user)
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.user_id = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    /**
+     * @var Customer
+     * @param $id
+     * @param $user
+     * @return Customer[]
+     */
+    public function getOneCustomer($id, $user)
+    {
+        return $this->createQueryBuilder('c')
+            ->Where('c.user_id = :user')
+            ->andWhere('c.id = :id')
+            ->setParameter('user', $user)
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return Customer[] Returns an array of Customer objects
     //  */

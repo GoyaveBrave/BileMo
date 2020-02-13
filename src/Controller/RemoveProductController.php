@@ -17,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class RemoveProductController extends AbstractController
 {
     /**
-     * @Route("/product-management/managed-products{id}", name="remove_product", methods={"DELETE"})
+     * @Route("/products/{id}", name="remove_product", methods={"DELETE"})
      * @param EntityManagerInterface $em
      * @param Products $products
      * @return Response
@@ -27,6 +27,6 @@ class RemoveProductController extends AbstractController
         $em->remove($products);
         $em->flush();
 
-        return new Response('Success', Response::HTTP_CREATED);
+        return new Response(Response::HTTP_NO_CONTENT);
     }
 }

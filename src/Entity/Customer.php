@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
+ * @UniqueEntity(
+ *     fields={"name"})
  */
 class Customer
 {
@@ -19,7 +21,7 @@ class Customer
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
     private $name;
 
@@ -30,6 +32,7 @@ class Customer
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Email()
      */
     private $email;
 
@@ -39,21 +42,25 @@ class Customer
      */
     private $user_id;
 
+    private $link;
+
     /**
      * Customer constructor.
+     *
      * @param $name
      * @param $address
      * @param $email
      * @param $user_id
+     * @param $link
      */
-    public function __construct($name, $address, $email, $user_id)
+    public function __construct($name, $address, $email, $user_id, $link)
     {
         $this->name = $name;
         $this->address = $address;
         $this->email = $email;
         $this->user_id = $user_id;
+        $this->link = $link;
     }
-
 
     public function getId(): ?int
     {
@@ -71,7 +78,6 @@ class Customer
 
         return $this;
     }
-
 
     public function getAddress(): ?string
     {
@@ -107,5 +113,24 @@ class Customer
         $this->user_id = $user_id;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * @param mixed $link
+     * @return mixed
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
+
+        return $link;
     }
 }

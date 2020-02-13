@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Controller;
-use App\Entity\Customer;
-use App\Entity\Products;
+
+use App\DTO\CustomerDTO;
+use App\Repository\CustomerRepository;
+use App\Service\LinksAdderCustomer;
+use App\Service\ResponseManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,29 +15,50 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class UpdateCustomerController extends AbstractController
 {
+    private $serializer;
+    private $em;
 
     /**
-     * @Route("/api/customer-management/managed-customer{id}", name="update_customer", methods={"PUT"})
+     * UpdateCustomerController constructor.
+     *
+     * @param $serializer
+     * @param $em
+     */
+    public function __construct(SerializerInterface $serializer, EntityManagerInterface $em)
+    {
+        $this->serializer = $serializer;
+        $this->em = $em;
+    }
+
+    /**
+     * @Route("/api/customers/{id}", name="update_customer", methods={"PUT"})
+     *
      * @param Request $request
      * @param $id
-     * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $em
-     * @param Customer $customer
+     * @param ResponseManager $responseManager
+     * @param Response $response
+     *
+     * @param CustomerRepository $customerRepository
+     * @param LinksAdderCustomer $linksAdderCustomer
      * @return Response
      */
-    public function updateAction(Request $request, $id, SerializerInterface $serializer, EntityManagerInterface $em, Customer $customer)
+    public function updateAction(Request $request, $id, ResponseManager $responseManager, Response $response, CustomerRepository $customerRepository, LinksAdderCustomer $linksAdderCustomer)
     {
         $req = $request->getContent();
-        $data = $serializer->deserialize($req,Customer::class, 'json');
+        $data = $this->serializer->deserialize($req, CustomerDTO::class, 'json');
+
+        $customer = $customerRepository->find($id);
+
+        $link = $linksAdderCustomer->addLink();
 
         $customer
             ->setName($data->getName())
-            ->setAddress($data->getAddress())
             ->setEmail($data->getEmail())
-            ->setUserId($this->getUser());
+            ->setAddress($data->getAddress())
+            ->setLink($link);
 
-        $em->flush();
+        $this->em->flush();
 
-        return new Response('You have successfully updated', Response::HTTP_CREATED);
+        return $responseManager($data, $request, Response::HTTP_OK);
     }
 }

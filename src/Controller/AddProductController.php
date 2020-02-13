@@ -1,30 +1,52 @@
 <?php
 
 namespace App\Controller;
+
+use App\DTO\ProductsDTO;
 use App\Entity\Products;
+use App\Service\LinksAdderCustomer;
+use App\Service\ResponseManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AddProductController
+class AddProductController extends AbstractController
 {
     /**
-     * @Route("/product-management/managed-products", name="new_product", methods={"POST"})
-     * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $manager
+     * @Route("/products", name="new_product", methods={"POST"})
+     *
      * @return Response
      */
-    public function createAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $manager)
+    public function createAction(Request $request, SerializerInterface $serializer, EntityManagerInterface $manager, LinksAdderCustomer $linksAdderCustomer, ResponseManager $response, ValidatorInterface $validator)
     {
-        $product = $request->getContent();
-        $data = $serializer->deserialize($product, Products::class, 'json');
+        $req = $request->getContent();
 
-        $manager->persist($data);
+        /** @var ProductsDTO $productsDTO */
+        $productsDTO = $serializer->deserialize($req, ProductsDTO::class, 'json');
+
+        $link = $linksAdderCustomer->addLink();
+
+        $products = new Products(
+            $productsDTO->name,
+            $productsDTO->content,
+            $productsDTO->price,
+            $productsDTO->picture,
+            $productsDTO->setLink($link)
+        );
+        $errors = $validator->validate($products);
+
+        if (count($errors) > 0) {
+
+            return $this->json($errors, 400);
+        }
+
+        $manager->persist($products);
         $manager->flush();
 
-        return new Response('Success', Response::HTTP_CREATED);
+        return $response($products, $request, Response::HTTP_CREATED);
     }
 }

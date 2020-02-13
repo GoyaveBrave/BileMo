@@ -1,7 +1,12 @@
 <?php
 
 namespace App\Controller;
+
+use App\DTO\ProductsDTO;
 use App\Entity\Products;
+use App\Repository\ProductsRepository;
+use App\Service\LinksAdderCustomer;
+use App\Service\ResponseManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,26 +16,35 @@ use Symfony\Component\Serializer\SerializerInterface;
 class UpdateProductController
 {
     /**
-     * @Route("/product-management/managed-products{id}", name="update_product", methods={"PUT"})
+     * @Route("/products/{id}", name="update_product", methods={"PUT"})
+     *
      * @param Request $request
      * @param $id
+     *
+     * @param LinksAdderCustomer $linksAdderCustomer
      * @param SerializerInterface $serializer
      * @param EntityManagerInterface $em
-     * @param Products $products
+     * @param ProductsRepository $repository
+     * @param ResponseManager $response
      * @return Response
      */
-    public function updateAction(Request $request, $id, SerializerInterface $serializer, EntityManagerInterface $em, Products $products)
+    public function updateAction(Request $request, $id, LinksAdderCustomer $linksAdderCustomer, SerializerInterface $serializer, EntityManagerInterface $em, ProductsRepository $repository, ResponseManager $response)
     {
         $req = $request->getContent();
-        $data = $serializer->deserialize($req,Products::class, 'json');
+        $data = $serializer->deserialize($req, ProductsDTO::class, 'json');
+
+
+        $products = $repository->find($id);
+        $link = $linksAdderCustomer->addLink();
 
         $products
             ->setName($data->getName())
             ->setContent($data->getContent())
-            ->setPrice($data->getPrice());
+            ->setPrice($data->getPrice())
+            ->setLink($link);
 
         $em->flush();
 
-        return new Response('You have successfully updated', Response::HTTP_CREATED);
+        return $response($data, $request, Response::HTTP_OK);
     }
 }
