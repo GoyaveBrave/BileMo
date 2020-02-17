@@ -36,10 +36,9 @@ $ composer install
 3.  Customize the database connection information in the DATABASE_URL variable inside .env
 4.  Create the database, the schema, and load data fixtures
 ```
-$ php bin/console doctrine:database:create
-$ php bin/console make:entity
-$ php bin/console make:migration
-$ php bin/console doctrine:fixtures:load
+$ php bin/console d:d:c
+$ php bin/console d:m:m
+$ php bin/console d:f:l
 ```
 5.  Generate the SSH keys
 ```
@@ -52,7 +51,7 @@ $ openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
 
 You need to get a JSON Web Token to access the API resources
 
-For that, send the HTTP POST request in {yourdomain}/api/login_check with this JSON data in the Body of the request
+For that, send the HTTP POST request in {yourdomain}/login_check with this JSON data in the Body of the request
 ```
 {
 	"username": "orange@orange.fr",

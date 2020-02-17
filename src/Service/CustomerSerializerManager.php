@@ -16,6 +16,6 @@ class CustomerSerializerManager
         $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
         $serializer = new Serializer([$normalizer], [$encoder]);
 
-        return $serializer->serialize($customer, 'json');
+        return $serializer->serialize($customer, 'json', array_merge(['json_encode_options' => JSON_UNESCAPED_SLASHES], []));
     }
 }

@@ -4,7 +4,7 @@ namespace App\Subscriber;
 
 use App\Service\ResponseManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -39,15 +39,15 @@ class ErrorSubscriber implements EventSubscriberInterface
         $message = sprintf(
             'My Error says: %s',
             $exception->getMessage()
-
         );
+        $data = [
+            'error' => [
+                'code' => Response::HTTP_BAD_REQUEST,
+                'message' => $message,
+            ],
+        ];
+        $responseManager = $this->responseManager;
 
-        $response = new JsonResponse();
-        $response->setContent($message);
-        $response->headers->set('Content-Type', 'application/json');
-
-        $event->setResponse($response);
-
-        return $response;
+        $event->setResponse($responseManager($data, $event->getRequest(), Response::HTTP_BAD_REQUEST));
     }
 }

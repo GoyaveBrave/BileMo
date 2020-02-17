@@ -8,6 +8,7 @@ use App\Service\LinksAdderCustomer;
 use App\Service\ResponseManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,8 +45,9 @@ class UpdateCustomerController extends AbstractController
         $data = $this->serializer->deserialize($req, CustomerDTO::class, 'json');
 
         $customer = $customerRepository->find($id);
-
-        $link = $linksAdderCustomer->addLink();
+        if ($this->getUser()->getId() !== $customer->getUserId()->getId()) {
+            throw new AccessDeniedException('You don\'t have access to this');
+        }
 
         $customer
             ->setName($data->getName())

@@ -33,6 +33,13 @@ services:
         autowire: true
     Symfony\Component\HttpKernel\Event\ExceptionEvent:
         autowire: true
+    App\Listener\NotFoundExceptionListener:
+        tags:
+            - {name: kernel.event_listener, event: kernel.exception}
+    App\Listener\AccessDeniedExceptionListener:
+        tags:
+            - {name: kernel.event_listener, event: kernel.exception}
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     get_set_method_normalizer:

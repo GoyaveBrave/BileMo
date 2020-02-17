@@ -28,6 +28,7 @@ class ShowCustomerController extends AbstractController
         /** @var Customer $customer */
         $customer = $customerRepository->getAllCustomers($user);
 
+
         $link = $linksAdder->addLink();
         foreach ($customer as $customers) {
             $customers->setLink($link);

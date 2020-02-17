@@ -32,8 +32,8 @@ class AddProductController extends AbstractController
 
         $products = new Products(
             $productsDTO->name,
-            $productsDTO->content,
             $productsDTO->price,
+            $productsDTO->content,
             $productsDTO->picture,
             $productsDTO->setLink($link)
         );

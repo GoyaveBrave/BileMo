@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -27,6 +28,7 @@ class Products
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Type(type="float")
      */
     private $price;
 
@@ -82,7 +84,7 @@ class Products
         return $this->price;
     }
 
-    public function setPrice(string $price): self
+    public function setPrice(float $price): self
     {
         $this->price = $price;
 

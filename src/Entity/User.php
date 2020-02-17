@@ -50,10 +50,11 @@ class User implements UserInterface
      * @param $email
      * @param $token
      */
-    public function __construct($email, $token)
+    public function __construct($email, $token, $password)
     {
         $this->email = $email;
         $this->token = $token;
+        $this->password = $password;
         $this->customers = new ArrayCollection();
     }
 
@@ -147,6 +148,7 @@ class User implements UserInterface
 
         return $this;
     }
+
 
     /**
      * @return Collection|Customer[]

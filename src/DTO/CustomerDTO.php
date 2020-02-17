@@ -7,7 +7,7 @@ class CustomerDTO
     public $name;
     public $address;
     public $email;
-    public $user_id;
+    //public $user_id;
     public $link;
 
     /**
@@ -17,12 +17,11 @@ class CustomerDTO
      * @param $email
      * @param $user_id
      */
-    public function __construct(string $name, $address, $email, $user_id)
+    public function __construct(string $name, $address, $email)
     {
         $this->name = $name;
         $this->address = $address;
         $this->email = $email;
-        $this->user_id = $user_id;
     }
 
     public function setName(string $name): void
@@ -54,10 +53,7 @@ class CustomerDTO
     /**
      * @return mixed
      */
-    public function getUserId()
-    {
-        return $this->user_id;
-    }
+
 
     /**
      * @param mixed $address
@@ -78,10 +74,7 @@ class CustomerDTO
     /**
      * @param mixed $user_id
      */
-    public function setUserId($user_id): void
-    {
-        $this->user_id = $user_id;
-    }
+
 
     /**
      * @return mixed
